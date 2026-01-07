@@ -4,7 +4,7 @@ import {
   custom,
   http,
   parseAbi,
-} from "https://esm.sh/viem";
+} from "https://esm.sh/viem@1.21.4";
 
 const connectButton = document.getElementById("connectButton");
 const setButton = document.getElementById("setButton");
@@ -40,10 +40,20 @@ async function connectWallet() {
   });
 
   publicClient = createPublicClient({
+    chain: {
+      id: 11155111,
+      name: "Sepolia",
+      nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+      rpcUrls: {
+        default: {
+          http: ["https://eth-sepolia.public.blastapi.io"],
+        },
+      },
+    },
     transport: http("https://eth-sepolia.public.blastapi.io"),
   });
 
-  alert("Connected: " + account);
+  alert("Wallet connected");
 }
 
 async function setValue() {
@@ -53,14 +63,20 @@ async function setValue() {
   }
 
   const value = document.getElementById("numberInput").value;
+  if (value === "") {
+    alert("Enter a number");
+    return;
+  }
 
   await walletClient.writeContract({
     address: CONTRACT_ADDRESS,
     abi: ABI,
     functionName: "set",
-    args: [value],
+    args: [BigInt(value)], 
     account,
   });
+
+  alert("Transaction sent. Confirm in MetaMask.");
 }
 
 async function getValue() {
