@@ -1,19 +1,27 @@
+//theme-toggle
+    const themeToggle = document.getElementById("theme-toggle");
+    const body = document.body;
+    const heading = document.querySelector("h2");
+    const navi =document.querySelector("nav");
+
+    themeToggle.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        heading.classList.toggle("dark-mode");
+        navi.classList.toggle("dark-mode");
+    });
+
+
+//interact
 import {
   createWalletClient,
   createPublicClient,
   custom,
   http,
   parseAbi,
-} from "https://esm.sh/viem@1.21.4";
+} from "https://esm.sh/viem@1.21.4"
 
-/* ================== CONFIG ================== */
-
-// 🔴 PUT YOUR ALCHEMY RPC KEY HERE
 const RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/FrrRJ_WZfDz67rI1DaYfd";
-
-// Your deployed Sepolia contract
 const CONTRACT_ADDRESS = "0x6e1219c3938Ee9de9df567616d1FC5D3b3966e13";
-
 const ABI = parseAbi([
   "function set(uint256 _num)",
   "function get() view returns (uint256)",
@@ -28,21 +36,15 @@ const sepoliaChain = {
   },
 };
 
-/* ================== ELEMENTS ================== */
-
 const connectButton = document.getElementById("connectButton");
 const setButton = document.getElementById("setButton");
 const getButton = document.getElementById("getButton");
 const output = document.getElementById("output");
 
-/* ================== STATE ================== */
-
 let walletClient;
 let publicClient;
 let account;
-let isConnecting = false; // 🔒 prevents MetaMask spam
-
-/* ================== CONNECT WALLET ================== */
+let isConnecting = false;
 
 async function connectWallet() {
   if (isConnecting) return;
@@ -54,7 +56,6 @@ async function connectWallet() {
       return;
     }
 
-    // Request account access ONCE
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -78,13 +79,10 @@ async function connectWallet() {
     alert("Wallet connected: " + account);
   } catch (err) {
     console.error("CONNECT ERROR:", err);
-    alert("MetaMask request already pending. Open MetaMask.");
   } finally {
     isConnecting = false;
   }
 }
-
-/* ================== SET VALUE ================== */
 
 async function setValue() {
   try {
@@ -103,7 +101,7 @@ async function setValue() {
       address: CONTRACT_ADDRESS,
       abi: ABI,
       functionName: "set",
-      args: [BigInt(value)], // ✅ REQUIRED
+      args: [BigInt(value)],
       account,
     });
 
@@ -113,8 +111,6 @@ async function setValue() {
     alert("Transaction failed. Check console.");
   }
 }
-
-/* ================== GET VALUE ================== */
 
 async function getValue() {
   try {
@@ -135,8 +131,6 @@ async function getValue() {
     alert("Read failed. Check console.");
   }
 }
-
-/* ================== EVENTS ================== */
 
 connectButton.onclick = connectWallet;
 setButton.onclick = setValue;
